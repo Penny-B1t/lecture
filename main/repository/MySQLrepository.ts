@@ -3,14 +3,14 @@ import {createPool, Pool, QueryResult, RowDataPacket} from "mysql2/promise";
 // MysqlRepository ConnectionPool Class
 class MysqlRepository{
     // 커넥션 풀을 보관하는 변수
-    private pool: Pool;
+    public pool: Pool;
     constructor() {
         console.log(`MySQL has been initialized`)
         this.pool = createPool({
-            host :`localhost`,
+            host :`223.130.142.124`,
             user : `root`,
-            password : `passowrd`,
-            database : `dalong`
+            password : `bnctech211`,
+            database : `lecture`
         })
     }
 
