@@ -1,7 +1,10 @@
 import {createPool, Pool, QueryResult, RowDataPacket} from "mysql2/promise";
+import {Repository} from "./repository";
+
+type Constructor<T> = new (...args: any[]) => T;
 
 // MysqlRepository ConnectionPool Class
-class MysqlRepository{
+export class MysqlRepository{
     // 커넥션 풀을 보관하는 변수
     public pool: Pool;
     constructor() {
@@ -18,19 +21,22 @@ class MysqlRepository{
      *
      * @param query 컴파일 하고자 하는 SQL문
      * @param params 인자 바인딩을 하고자 하는 값들의 배열
+     * @param entity
      */
-    async executeQuery<T extends RowDataPacket[]>( query:string, params:any[]=[]) {
+    async executeQuery<T>( query: string, params: any[]=[], entity: Constructor<T> ) {
         let connection = null;
         try{
             connection = await this.pool.getConnection();
-            let [res] = await connection.query<T>(query, params)
-            return res;
+            let [rows] = await connection.query<RowDataPacket[]>(query, params)
+
+            return rows.map(row => {
+                return new entity(...Object.values(row))
+            })
         } catch (error){
-            console.error(error);
+            const e = error as Error;
+            throw new Error(e.message);
         } finally {
             if (connection) connection.release();
         }
     }
 }
-
-module.exports = MysqlRepository;
