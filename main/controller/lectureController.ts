@@ -4,11 +4,16 @@ import "reflect-metadata";
 
 import { MysqlRepository } from "../repository/MySQLrepository"
 import { Student } from "../model/student";
+import { UserDaoImpl } from "../dao/lectureDaoImpl"
 
 @Service('lectureController')
 export class LectureController {
-    constructor(@Inject('Repository') private repository: MysqlRepository) {
+    constructor(
+        @Inject('Repository') private repository: MysqlRepository,
+        @Inject('lecturDao') private lecturDao: UserDaoImpl
+    ){
         this.repository = repository;
+        this.lecturDao = lecturDao;
     }
 
 
@@ -16,38 +21,28 @@ export class LectureController {
         console.log('getLectureList');
 
         // 파라미터 없는 경우 고려 필요
-        const instructor = req.query.instructor;
-        const course = req.query.course;
-        const student = req.query.student;
-        const category = req.query.category;
-        // const { instructor, course, student } = req.query;
+        const instructorParam = req.query.instructor;
+        const courseParam = req.query.course;
+        const studentParam = req.query.student;
+        const categoryParam = req.query.category;
 
-        let query = 'SELECT * FROM students WHERE 1=1';
-        const params = [];
-
-        if (instructor) {
-            query += ' AND instructor_name LIKE ?';
-            params.push(`%${instructor}%`);
+        // 필수 파라미터 누락 검사
+        if (!instructorParam && !courseParam && !studentParam ) {
+            return res.status(400).send('Missing required parameter');
         }
 
-        if (course) {
-            query += ' AND course_name LIKE ?';
-            params.push(`%${course}%`);
+        // 파라미터 값이 숫자가 아닌 경우
+        if (categoryParam && isNaN(Number(categoryParam))) {
+            return res.status(400).send('category parameter must be a number');
         }
 
-        if (student) {
-            query += ' AND student_identifier LIKE ?';
-            params.push(`%${student}%`);
-        }
+        const instructor = instructorParam ? String(instructorParam) : null;
+        const course = courseParam ? String(courseParam) : null;
+        const student = studentParam ? String(studentParam) : null;
+        const category = categoryParam ? Number(categoryParam) : null;
 
-        if (category) {
-            query += ' AND category = ?';
-            params.push(category);
-        }
-
-        try {
-            // 저장 레이어 상속 받아 실행
-            const [rows] = await this.repository.executeQuery<Student>(query, params, Student);
+        try{
+            const [rows] = await this.lecturDao.getLectureList(instructor, course, student, category)
             res.status(200).json(rows);
         } catch(err) {
             next(err)
@@ -61,7 +56,7 @@ export class LectureController {
         const params = [lectureId];
 
         try{
-            // const [rows] = await this.repository.execute<Student>(query, params);
+            // const [rows] = await this.lecturDao.getLectureList(instructor, course, student, category)
             // res.status(200).json(rows);
         } catch(err) {
             next(err)

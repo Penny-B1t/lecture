@@ -1,5 +1,6 @@
-import {createPool, Pool, QueryResult, RowDataPacket} from "mysql2/promise";
+import {createPool, Pool, RowDataPacket , PoolConnection} from "mysql2/promise";
 import {Repository} from "./repository";
+import { Student } from "../model/student";
 
 type Constructor<T> = new (...args: any[]) => T;
 
@@ -17,26 +18,47 @@ export class MysqlRepository{
         })
     }
 
-    /**
-     *
-     * @param query 컴파일 하고자 하는 SQL문
-     * @param params 인자 바인딩을 하고자 하는 값들의 배열
-     * @param entity
-     */
-    async executeQuery<T>( query: string, params: any[]=[], entity: Constructor<T> ) {
-        let connection = null;
-        try{
-            connection = await this.pool.getConnection();
-            let [rows] = await connection.query<RowDataPacket[]>(query, params)
+    // /**
+    //  *
+    //  * @param query 컴파일 하고자 하는 SQL문
+    //  * @param params 인자 바인딩을 하고자 하는 값들의 배열
+    //  * @param entity
+    //  */
+    // async executeQuery<T>( query: string, params: any[]=[], entity: Constructor<T> ) {
+    //     let connection = null;
+    //     try{
+    //         connection = await this.pool.getConnection();
+    //         let [rows] = await connection.query<RowDataPacket[]>(query, params)
 
-            return rows.map(row => {
-                return new entity(...Object.values(row))
-            })
-        } catch (error){
-            const e = error as Error;
-            throw new Error(e.message);
-        } finally {
-            if (connection) connection.release();
-        }
+    //         return rows.map(row => {
+    //             return new entity(...Object.values(row))
+    //         })
+    //     } catch (error){
+    //         const e = error as Error;
+    //         throw new Error(e.message);
+    //     } finally {
+    //         if (connection) connection.release();
+    //     }
+    // }
+    // async executeQuery(query: string, params: any[]=[]){
+    //     let connection = null;
+    //     try{
+    //         connection = await this.pool.getConnection();
+    //         let [rows] = await connection.query<RowDataPacket[]>(query, params)
+    //         return rows.map(row => { new Student(row.id, row,)})
+    //     } catch (error){
+    //         const e = error as Error;
+    //         throw new Error(e.message);
+    //     } finally {
+    //         if (connection) connection.release();
+    //     }
+    // }
+
+    async getConnetion(): Promise<PoolConnection>{
+        return await this.pool.getConnection();
+    }
+
+    async disconnect(connection: PoolConnection | undefined): Promise<void>{
+        if(connection) connection.release();
     }
 }
