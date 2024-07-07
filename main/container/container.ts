@@ -1,10 +1,9 @@
-const container = require("typedi").Container;
+import { Container } from "typedi";
 import "reflect-metadata";
+import setting from "../config/config"; // 설정 파일의 경로를 적절히 조정하세요
+import MySQLRepository from "../repository/MySQLrepository"; // 경로를 적절히 조정하세요
 
-const setting = require("../config/config");
-const MySQLRepository = require("../repository/MySQLrepository");
+Container.set("setting", setting);
+Container.set("Repository", new MySQLRepository());
 
-container.set("setting", setting);
-container.set("Repository", new MySQLRepository(container));
-
-module.exports = container;
+export default Container;

@@ -1,11 +1,10 @@
 import {createPool, Pool, RowDataPacket , PoolConnection} from "mysql2/promise";
-import {Repository} from "./repository";
-import { Student } from "../model/student";
+import {Service} from "typedi";
 
 type Constructor<T> = new (...args: any[]) => T;
 
-// MysqlRepository ConnectionPool Class
-export class MysqlRepository{
+@Service('Repository')
+export default class MysqlRepository{
     // 커넥션 풀을 보관하는 변수
     public pool: Pool;
     constructor() {

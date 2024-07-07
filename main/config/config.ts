@@ -1,4 +1,4 @@
-const path = require("path");
+import path from "path";
 require("dotenv").config({ path : path.join(__dirname, "../.env") });
 
 const config = {
@@ -9,4 +9,4 @@ const config = {
     }
 }
 
-module.exports = config;
+export default config;
