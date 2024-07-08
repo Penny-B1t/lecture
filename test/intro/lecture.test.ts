@@ -29,7 +29,6 @@ describe(`lectureController getLectureList Test`, () => {
         lecturDao.getLectureList = jest.fn()
         Container.set('Repository', repository);
         Container.set('lecturDao', lecturDao);
-        // lecture = Container.get('lectureController'); //
         lecture = new LectureController(lecturDao);
     })
 
@@ -309,5 +308,155 @@ describe(`lectureController setLecturesRegister Test`, () => {
 
         await lecture.setLecturesRegister(req, res, next);
         expect(lecturDao.setLecturesRegister).toHaveBeenCalled();
+    })
+});
+
+describe(`lectureController setLectureResister Test`, () => {
+    let repository : jest.Mocked<MysqlRepository>;
+    let lecture: LectureController;
+    let lecturDao: UserDaoImpl;
+
+    let res : any, next : any
+    beforeEach(()=>{
+        // req = httpMocks.createRequest();
+        res = httpMocks.createResponse();
+        next = jest.fn();
+    })
+
+    beforeEach(() => {
+        repository = new MysqlRepository() as jest.Mocked<MysqlRepository>;
+        lecturDao = new UserDaoImpl(repository) as jest.Mocked<UserDaoImpl>
+        lecturDao.lecturerUpdate = jest.fn()
+        Container.set('Repository', repository);
+        Container.set('lecturDao', lecturDao);
+        // lecture = Container.get('lectureController'); //
+        lecture = new LectureController(lecturDao);
+    })
+
+    it(`setLectureResister is class`, () => {
+        expect(typeof lecture.setLectureEdit).toBe("function");
+    })
+
+    it(`should call setLectureRegister`, async () => {
+        const req = httpMocks.createRequest();
+        req.body = {
+            lecturer_id : 1,
+            title: "HI Python",
+            description: "Pyhon Stater",
+            price: 500
+        }
+        await lecture.setLectureEdit(req, res, next);
+        expect(lecturDao.lecturerUpdate).toHaveBeenCalled();
+    })
+});
+
+describe(`lectureController setLectureEdit Test`, () => {
+    let repository : jest.Mocked<MysqlRepository>;
+    let lecture: LectureController;
+    let lecturDao: UserDaoImpl;
+
+    let res : any, next : any
+    beforeEach(()=>{
+        // req = httpMocks.createRequest();
+        res = httpMocks.createResponse();
+        next = jest.fn();
+    })
+
+    beforeEach(() => {
+        repository = new MysqlRepository() as jest.Mocked<MysqlRepository>;
+        lecturDao = new UserDaoImpl(repository) as jest.Mocked<UserDaoImpl>
+        lecturDao.lecturerUpdate = jest.fn()
+        Container.set('Repository', repository);
+        Container.set('lecturDao', lecturDao);
+        // lecture = Container.get('lectureController'); //
+        lecture = new LectureController(lecturDao);
+    })
+
+    it(`setLectureEdit is class`, () => {
+        expect(typeof lecture.setLectureEdit).toBe("function");
+    })
+
+    it(`should call lecturerUpdate`, async () => {
+        const req = httpMocks.createRequest();
+        req.body = {
+            lecturer_id : 1,
+            title: "HI Python",
+            description: "Pyhon Stater",
+            price: 500
+        }
+        await lecture.setLectureEdit(req, res, next);
+        expect(lecturDao.lecturerUpdate).toHaveBeenCalled();
+    })
+});
+
+describe(`lectureController setLectureOpen Test`, () => {
+    let repository : jest.Mocked<MysqlRepository>;
+    let lecture: LectureController;
+    let lecturDao: UserDaoImpl;
+
+    let res : any, next : any
+    beforeEach(()=>{
+        // req = httpMocks.createRequest();
+        res = httpMocks.createResponse();
+        next = jest.fn();
+    })
+
+    beforeEach(() => {
+        repository = new MysqlRepository() as jest.Mocked<MysqlRepository>;
+        lecturDao = new UserDaoImpl(repository) as jest.Mocked<UserDaoImpl>
+        lecturDao.setOpenLectures = jest.fn()
+        Container.set('Repository', repository);
+        Container.set('lecturDao', lecturDao);
+        // lecture = Container.get('lectureController'); //
+        lecture = new LectureController(lecturDao);
+    })
+
+    it(`setLectureOpen is class`, () => {
+        expect(typeof lecture.setLectureOpen).toBe("function");
+    })
+
+    it(`should call setOpenLectures`, async () => {
+        const req = httpMocks.createRequest();
+        req.query = {
+            lecture_id : '1'
+        }
+        await lecture.setLectureOpen(req, res, next);
+        expect(lecturDao.setOpenLectures).toHaveBeenCalled();
+    })
+});
+
+describe(`lectureController setLectureDelete Test`, () => {
+    let repository : jest.Mocked<MysqlRepository>;
+    let lecture: LectureController;
+    let lecturDao: UserDaoImpl;
+
+    let res : any, next : any
+    beforeEach(()=>{
+        // req = httpMocks.createRequest();
+        res = httpMocks.createResponse();
+        next = jest.fn();
+    })
+
+    beforeEach(() => {
+        repository = new MysqlRepository() as jest.Mocked<MysqlRepository>;
+        lecturDao = new UserDaoImpl(repository) as jest.Mocked<UserDaoImpl>
+        lecturDao.lecturerDelete = jest.fn()
+        Container.set('Repository', repository);
+        Container.set('lecturDao', lecturDao);
+        // lecture = Container.get('lectureController'); //
+        lecture = new LectureController(lecturDao);
+    })
+
+    it(`setLectureDelete is class`, () => {
+        expect(typeof lecture.setLectureDelete).toBe("function");
+    })
+
+    it(`should call lecturerDelete`, async () => {
+        const req = httpMocks.createRequest();
+        req.query = {
+            lecture_id : '1'
+        }
+        await lecture.setLectureDelete(req, res, next);
+        expect(lecturDao.lecturerDelete).toHaveBeenCalled();
     })
 });

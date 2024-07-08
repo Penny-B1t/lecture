@@ -8,6 +8,9 @@ const lectureController = Container.get(LectureController);
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
+// 강의 도메인 공통 로직
+router.use(lectureController.validationLecturer)
+
 router.get('/', (req: Request, res: Response, next: NextFunction) => lectureController.getLectureList(req, res, next));
 router.get('/details', (req: Request, res: Response, next: NextFunction) => lectureController.getLectureDetail(req, res, next));
 router.post('/register', (req: Request, res: Response, next: NextFunction) => lectureController.setLectureResister(req, res, next));

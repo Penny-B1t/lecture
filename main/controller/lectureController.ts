@@ -22,6 +22,7 @@ interface lectureRegisterInfo {
 }
 
 interface lectureEditParams {
+    lecturer_id : number;
     title: string;
     description: string;
     price: number;
@@ -36,6 +37,28 @@ export class LectureController {
 
     hasAllProperties = (obj: any, propertyKey: string[]): boolean => {
         return propertyKey.every(prop => obj.hasOwnProperty(prop) && obj[prop] !== undefined && obj[prop] !== null);
+    }
+
+    validationLecturer = async (req: Request, res: Response, next: NextFunction) => {
+        const lecturerIdParam = req.query.lecturer_Id;
+
+        if (!lecturerIdParam && Number.isNaN(Number(lecturerIdParam))){
+            return res.status(400).send('Lecture id must be a number');
+        }
+
+        try {
+            const result = await this.lectureDao.getLecturer(Number(lecturerIdParam));
+
+            if (result) {
+                next()
+            } else {
+                return res.status(404).send('Lecture id not found');
+            }
+        } catch (err) {
+            next(err)
+        }
+
+
     }
 
     getLectureList = async (req: Request, res: Response, next: NextFunction) => {
@@ -149,6 +172,7 @@ export class LectureController {
         }
     }
 
+    // 강의 수정
     setLectureEdit = async (req: Request, res: Response, next: NextFunction) => {
         const lectureEditParams: lectureEditParams = req.body
 
@@ -163,7 +187,37 @@ export class LectureController {
         } catch(err) {
             next(err)
         }
+    }
 
+    // 강의 오픈
+    setLectureOpen = async(req: Request, res: Response, next: NextFunction) => {
+        const lectureIdParam = req.query.lecture_id;
 
+        if (!lectureIdParam && Number.isNaN(Number(lectureIdParam))){
+            return res.status(400).send('Lecture id must be a number');
+        }
+
+        try {
+            const result = await this.lectureDao.setOpenLectures(Number(lectureIdParam));
+            return res.status(200).json(result);
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    // 강의 삭제
+    setLectureDelete = async(req: Request, res: Response, next: NextFunction) => {
+        const lectureIdParam = req.query.lecture_id;
+
+        if (!lectureIdParam && Number.isNaN(Number(lectureIdParam))){
+            return res.status(400).send('Lecture id must be a number');
+        }
+
+        try {
+            const result = await this.lectureDao.lecturerDelete(Number(lectureIdParam));
+            return res.status(200).json(result);
+        } catch (err) {
+            next(err)
+        }
     }
 }

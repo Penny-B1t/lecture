@@ -7,7 +7,6 @@ import {
     LectureRegisterDetailsImpl, LectureRegisterDetails, LectureDetails, LectureDetailsImpl
 } from "../model/lecture";
 import { RowDataPacket } from "mysql2";
-import {query} from "express";
 
 // 테이터 접근용 DTO
 interface LectureResisterRow extends RowDataPacket, LectureResisterImpl {}
@@ -26,6 +25,7 @@ interface lectureRegisterInfo {
 }
 
 interface lectureEditParams {
+    lecturer_id : number;
     title: string;
     description: string;
     price: number;
@@ -36,6 +36,23 @@ export class UserDaoImpl{
 
     constructor(@Inject('Repository') private repository: MysqlRepository) {
         this.repository = repository;
+    }
+
+    async getLecturer(lecturerId: number) {
+        let connection = await this.repository.getConnetion();
+        try {
+            let query = `SELECT lecturer_id, lecturer_name FROM lecturer WHERE lecturer_id = ?`
+            let params = [lecturerId]
+
+            let [rows] = await connection.query(query, params);
+            return (rows) ? { message: "find lecturer" } : null;
+
+        } catch(error) {
+            const e = error as Error;
+            throw new Error(e.message);
+        } finally {
+            if (connection) connection.release();
+        }
     }
 
     async getStudentLectureList(student: string){
@@ -263,7 +280,7 @@ export class UserDaoImpl{
             }
 
             // 강의 식별자를 통한 검색 필요
-            query += `WHERE ${lectureInfo.}`
+            query += `WHERE lecture_id =  ${lectureInfo.lecturer_id}`
 
             await connection.query(query, params)
             await connection.commit();
@@ -291,6 +308,28 @@ export class UserDaoImpl{
 
             await connection.commit();
             return { message: 'Lecture Update Open successfully.' }
+        } catch(error){
+            if (connection) await connection.rollback();
+            const e = error as Error;
+            throw new Error(e.message);
+        } finally {
+            if (connection) connection.release();
+        }
+    }
+
+    async lecturerDelete(lectureId: number){
+        let connection = await this.repository.getConnetion();
+        try{
+            // 트랜잭션 시작
+            await connection.beginTransaction();
+
+            // 강의 정보 추가
+            let query = `DELETE FROM lecture WHERE lecture_id = ?`;
+            const params = [lectureId];
+            let [result] = await connection.query(query, params)
+
+            await connection.commit();
+            return { message: 'Lecture DELETE successfully.' }
         } catch(error){
             if (connection) await connection.rollback();
             const e = error as Error;
