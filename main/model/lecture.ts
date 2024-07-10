@@ -1,4 +1,5 @@
-import {RowDataPacket} from "mysql2";
+import {IsString, IsEmail, Length, IsInt, IsDate} from 'class-validator';
+import {Is} from "@sinclair/typebox/value/is";
 
 // 강의 목록 조회용 DTO
 export interface LectureResisterImpl {
@@ -12,12 +13,25 @@ export interface LectureResisterImpl {
 }
 
 export class LectureRegister implements LectureResisterImpl{
+    @IsInt()
     lecture_id: number;
+
+    @Length(5, 50)
     title: string;
+
+    @IsInt()
     category: number;
+
+    @IsDate()
     lectureRegisterDate : Date;
+
+    @IsString()
     lecturerName: string;
+
+    @IsInt()
     price: number;
+
+    @IsInt()
     registerCount: number;
 
     constructor(
@@ -41,7 +55,10 @@ export interface LectureRegisterDetailsImpl {
 }
 
 export class LectureRegisterDetails implements LectureRegisterDetailsImpl{
+    @IsString()
     nickname: string;
+
+    @IsDate()
     register_date: Date;
 
     constructor(nickname: string, register_date: Date) {

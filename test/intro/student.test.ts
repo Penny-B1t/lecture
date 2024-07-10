@@ -45,3 +45,71 @@ describe(`lectureController getLectureList Test`, () => {
         expect(studentDao.setStudentRegister).toHaveBeenCalled();
     })
 })
+
+describe(`lectureController deleteStudent Test`, () => {
+
+    let repository: jest.Mocked<MysqlRepository>;
+    let student: StudentController;
+    let studentDao: StudentDaoImpl;
+
+    let req: any, res: any, next: any
+    beforeEach (() => {
+        req = httpMocks.createRequest();
+        res = httpMocks.createResponse ();
+        next = jest.fn ();
+    })
+
+    beforeEach (() => {
+        repository = new MysqlRepository () as jest.Mocked<MysqlRepository>;
+        studentDao = new StudentDaoImpl (repository) as jest.Mocked<StudentDaoImpl>
+        studentDao.StudentDelete = jest.fn ()
+        Container.set ('Repository', repository);
+        Container.set ('studentDao', studentDao);
+        student = new StudentController (studentDao);
+    })
+
+    it(``, () => {
+        expect(typeof student.deleteStudent).toBe("function");
+        expect(student).toBeInstanceOf(StudentController);
+    })
+
+    it(``, async () => {
+        // req.query.instructor = 'test';
+        await student.deleteStudent(req, res, next);
+        expect(studentDao.StudentDelete).toHaveBeenCalled();
+    })
+})
+
+describe(`lectureController deleteStudent Test`, () => {
+
+    let repository: jest.Mocked<MysqlRepository>;
+    let student: StudentController;
+    let studentDao: StudentDaoImpl;
+
+    let req: any, res: any, next: any
+    beforeEach (() => {
+        req = httpMocks.createRequest();
+        res = httpMocks.createResponse ();
+        next = jest.fn ();
+    })
+
+    beforeEach (() => {
+        repository = new MysqlRepository () as jest.Mocked<MysqlRepository>;
+        studentDao = new StudentDaoImpl (repository) as jest.Mocked<StudentDaoImpl>
+        studentDao.setLectureRegister = jest.fn ()
+        Container.set ('Repository', repository);
+        Container.set ('studentDao', studentDao);
+        student = new StudentController (studentDao);
+    })
+
+    it(``, () => {
+        expect(typeof student.lecturerRegister).toBe("function");
+        expect(student).toBeInstanceOf(StudentController);
+    })
+
+    it(``, async () => {
+        // req.query.instructor = 'test';
+        await student.lecturerRegister(req, res, next);
+        expect(studentDao.setLectureRegister).toHaveBeenCalled();
+    })
+})

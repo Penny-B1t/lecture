@@ -1,9 +1,12 @@
 import express, { Express, Request, Response } from 'express';
 import lectureRouter from "./router/searchRouter";
-import container from './container/container';
+import studentRouter from "./router/studentRouter"
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const app: Express = express();
-const port = 5000;
+const port = process.env.PORT;
 
 
 app.get('/', (req: Request, res: Response) => {
@@ -11,6 +14,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/lectures', lectureRouter)
+app.use('/student', studentRouter)
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at <https://localhost>:${port}`);

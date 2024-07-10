@@ -6,12 +6,13 @@ import {
     LectureResisterImpl, LectureRegister,
     LectureRegisterDetailsImpl, LectureRegisterDetails, LectureDetails, LectureDetailsImpl
 } from "../model/lecture";
+
+
 import { RowDataPacket } from "mysql2";
 
 // 테이터 접근용 DTO
 interface LectureResisterRow extends RowDataPacket, LectureResisterImpl {}
 interface LectureRegisterDetailsRow extends RowDataPacket, LectureRegisterDetailsImpl {}
-interface LectureDetailsRow extends RowDataPacket, LectureDetailsImpl {}
 interface LectureRow extends RowDataPacket {
     register_count: number;
 }
@@ -256,31 +257,36 @@ export class UserDaoImpl{
             await connection.beginTransaction();
 
             // 기존 정보를 가져옴
-            let query = `SELECT * FROM lecture_register_view WHERE title LIKE ?`;
-            const params = [];
-            params.push(`${lectureInfo}`);
+            let query = `SELECT * FROM lecture_register_view WHERE lecture_id LIKE ?`;
+            let params = [];
+            params.push(`${lectureInfo.lecturer_id}`);
 
-            let [rows] = await connection.query<RowDataPacket[]>(query, params)
+            let rows = await connection.query(query, params)
 
+            params = [];
             query = `UPDATE lecture SET `
 
-            if(!lectureInfo.title){
-                query += " title = ?,";
-                params.push(lectureInfo.title);
+            if (!rows) return { message: 'No lecture found.' }
+
+            if(lectureInfo.title){
+                query += " title = ? ,";
+                params.push(`${lectureInfo.title}`);
             }
 
-            if(!lectureInfo.description){
-                query += " description = ?,";
-                params.push(lectureInfo.description);
+            if(lectureInfo.description){
+                query += " description = ? ,";
+                params.push(`${lectureInfo.description}`);
             }
 
-            if(!lectureInfo.price){
-                query += " price = ?,";
-                params.push(lectureInfo.price);
+            if(lectureInfo.price){
+                query += " price = ? ";
+                params.push(`${lectureInfo.price}`);
             }
 
             // 강의 식별자를 통한 검색 필요
-            query += `WHERE lecture_id =  ${lectureInfo.lecturer_id}`
+            query += ` WHERE lecture_id =  ${lectureInfo.lecturer_id}`
+
+            console.log(query)
 
             await connection.query(query, params)
             await connection.commit();
@@ -333,22 +339,11 @@ export class UserDaoImpl{
         } catch(error){
             if (connection) await connection.rollback();
             const e = error as Error;
+            // 수강중인 학생으로 인해 외래키 조
+            if (e.message.includes(' foreign key constraint fails')) return { message: 'Lecture Delete Failed.' };
             throw new Error(e.message);
         } finally {
             if (connection) connection.release();
         }
     }
-
-    // deleteUser(id) {
-    //     return new Promise((resolve, reject) => {
-    //         const query = "DELETE FROM users WHERE id = ?";
-    //         this.db.run(query, [id], function(err) {
-    //             if (err) {
-    //                 reject(err);
-    //             } else {
-    //                 resolve(this.changes);
-    //             }
-    //         });
-    //     });
-    // }
 }

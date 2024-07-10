@@ -1,13 +1,11 @@
-import {NextFunction, Request, Response} from "express";
-import {Inject, Service} from "typedi";
+import { NextFunction, Request, Response } from "express";
+import { Inject, Service } from "typedi";
 import "reflect-metadata";
 import { StudentDaoImpl } from "../dao/studentDaoImpl";
-import { Student, StudentImpl } from "../model/student"
-
-interface StudentParma {
-    nickname?: string;
-    email?: string;
-}
+import { Student, LectureRegisterArray, LectureRegister } from "../model/student"
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { StudentParma } from "../model/studentParam";
 
 @Service()
 export class StudentController {
@@ -15,16 +13,14 @@ export class StudentController {
         @Inject('studentDao') private studentDao: StudentDaoImpl
     ) {}
 
-    hasAllProperties = (obj: any, propertyKey: string[]): boolean => {
-        return propertyKey.every(prop => obj.hasOwnProperty(prop) && obj[prop] !== undefined && obj[prop] !== null);
-    }
-
     registerStudent = async (req: Request, res: Response, next: NextFunction) => {
-        const studentParma: StudentParma = req.query;
+        const studentParma: StudentParma = plainToInstance(StudentParma,req.query);
+        const errors = await validate(studentParma);
 
-        if (!this.hasAllProperties(studentParma, Object.keys(studentParma))){
-            return res.status(400).send('Missing required parameter');
+        if (errors.length > 0) {
+            return res.status(400).send({ errors: errors });
         }
+
         try{
             const result = await this.studentDao.setStudentRegister(<Student>studentParma)
             return res.status(200).json(result)
@@ -41,11 +37,28 @@ export class StudentController {
         }
 
         try {
-
+            const result = await this.studentDao.StudentDelete(Number(studentIdParam))
+            return res.status(200).json(result)
         } catch (err) {
             next(err)
         }
     }
 
-    
+    lecturerRegister = async (req: Request, res: Response, next: NextFunction) => {
+        const lectureInfoParams = plainToInstance(LectureRegister,req.body);
+        const lecturesInfo = new LectureRegisterArray(lectureInfoParams)
+
+        const errors = await validate(lecturesInfo);
+
+        if (errors.length > 0) {
+            return res.status(404).send('Lecturer Register not found');
+        }
+
+        try{
+            const result = await this.studentDao.setLectureRegister(lectureInfoParams)
+            return res.status(200).json(result)
+        } catch(err) {
+            next(err)
+        }
+    }
 }

@@ -1,7 +1,6 @@
-import {RowDataPacket} from "mysql2/promise";
-import {LectureResisterImpl} from "./lecture";
+import {ArrayMinSize, IsInt, IsString, ValidateNested,} from "class-validator";
+import {Type} from "class-transformer";
 
-// RowDataPacket 타입이 아닌 특정 타입의 배열로 받는 코드 테스트
 export interface StudentImpl {
     nickname: string;
     email: string;
@@ -22,12 +21,27 @@ export interface LectureRegisterImpl {
     lecture_id : number;
 }
 
-export class LectureRegister implements LectureRegisterImpl{
+export class LectureRegister implements LectureRegisterImpl {
+    @IsString ()
     studentId: number;
-    lecture_id : number;
+
+    @IsInt ()
+    lecture_id: number;
 
     constructor(studentId: number, lecture_id: number) {
         this.studentId = studentId;
         this.lecture_id = lecture_id;
+    }
+}
+
+export class LectureRegisterArray {
+    @ValidateNested({ each: true })
+    @Type(() => LectureRegister)
+    @ArrayMinSize(1, { message: 'lecturesInfo must contain at least 1 item.' })
+    lecturesInfo: LectureRegister[]
+
+
+    constructor(lecturesInfo: LectureRegister[]) {
+        this.lecturesInfo = lecturesInfo;
     }
 }
