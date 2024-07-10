@@ -3,9 +3,9 @@ require("dotenv").config({ path : path.join(__dirname, "../.env") });
 
 const config = {
     MYSQL : {
-        User : process.env.User,
-        Password : process.env.Password,
-        Database : process.env.Database
+        User : process.env.USER,
+        Password : process.env.PASSWORD,
+        Database : process.env.DATABASE
     }
 }
 

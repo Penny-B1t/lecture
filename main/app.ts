@@ -1,9 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import lectureRouter from "./router/searchRouter";
 import studentRouter from "./router/studentRouter"
-import dotenv from 'dotenv'
-
-dotenv.config();
+import path from "path";
+require("dotenv").config({ path : path.join(__dirname, ".env") });
 
 const app: Express = express();
 const port = process.env.PORT;

@@ -1,8 +1,7 @@
 import {createPool, Pool , PoolConnection} from "mysql2/promise";
 import {Service} from "typedi";
-import dotenv from 'dotenv'
-
-dotenv.config();
+import path from "path";
+require("dotenv").config({ path : path.join(__dirname, "..",".env") });
 
 type Constructor<T> = new (...args: any[]) => T;
 
@@ -13,10 +12,11 @@ export default class MysqlRepository{
     constructor() {
         console.log(`MySQL has been initialized`)
         this.pool = createPool({
-            host :process.env["HOST "],
-            user : process.env["User "],
-            password : process.env["Password "],
-            database : process.env["Database "]
+            host : "223.130.142.124",
+            port : 3308,
+            user : "root",
+            password : "windstom",
+            database : "lecture"
         })
     }
 

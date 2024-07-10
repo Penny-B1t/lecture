@@ -9,6 +9,7 @@ import {
     ValidateNested
 } from "class-validator";
 import { Type } from 'class-transformer';
+import { format } from 'date-fns';
 
 export class QueryParams {
     @IsString()
@@ -27,6 +28,10 @@ export class QueryParams {
     @IsOptional()
     category?: string;
 
+    @IsString()
+    @IsOptional()
+    sortBy?: string;
+
     @IsNumberString()
     @IsOptional()
     orderBy?: string;
@@ -39,12 +44,12 @@ export class QueryParams {
     @IsOptional()
     limit?: string;
 
-
-    constructor(instructor: string, course: string, student: string, category: string, orderBy: string, page: string, limit: string) {
+    constructor(instructor: string, course: string, student: string, category: string, sortBy: string, orderBy: string, page: string, limit: string) {
         this.instructor = instructor;
         this.course = course;
         this.student = student;
         this.category = category;
+        this.sortBy = sortBy;
         this.orderBy = orderBy;
         this.page = page;
         this.limit = limit;

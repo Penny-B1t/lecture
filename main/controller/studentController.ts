@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import "reflect-metadata";
 import { StudentDaoImpl } from "../dao/studentDaoImpl";
-import { Student, LectureRegisterArray, LectureRegister } from "../model/student"
+import {Student, LectureRegisterArray, LectureRegist} from "../model/student"
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { StudentParma } from "../model/studentParam";
@@ -12,6 +12,17 @@ export class StudentController {
     constructor(
         @Inject('studentDao') private studentDao: StudentDaoImpl
     ) {}
+
+    validatorStudent = async (req: Request, res: Response, next: NextFunction) => {
+            const idParma = req.params.id
+            const result = await this.studentDao.validateStudent(Number(idParma));
+
+            if (!result){
+                return res.status(400).send('Student already exists');
+            } else {
+                next()
+            }
+    }
 
     registerStudent = async (req: Request, res: Response, next: NextFunction) => {
         const studentParma: StudentParma = plainToInstance(StudentParma,req.query);
@@ -30,7 +41,7 @@ export class StudentController {
     }
 
     deleteStudent = async (req: Request, res: Response, next: NextFunction) => {
-        const studentIdParam = req.query.studentId;
+        const studentIdParam = req.params.id;
 
         if (studentIdParam && Number.isNaN(Number(studentIdParam))){
             return res.status(400).send('Missing required parameter');
@@ -45,8 +56,9 @@ export class StudentController {
     }
 
     lecturerRegister = async (req: Request, res: Response, next: NextFunction) => {
-        const lectureInfoParams = plainToInstance(LectureRegister,req.body);
-        const lecturesInfo = new LectureRegisterArray(lectureInfoParams)
+        const lectureInfoParams = plainToInstance(LectureRegist,req.body);
+        const studentIdParam = req.params.id;
+        const lecturesInfo = new LectureRegisterArray(studentIdParam, lectureInfoParams)
 
         const errors = await validate(lecturesInfo);
 
@@ -55,8 +67,8 @@ export class StudentController {
         }
 
         try{
-            const result = await this.studentDao.setLectureRegister(lectureInfoParams)
-            return res.status(200).json(result)
+            const result = await this.studentDao.setLectureRegister(lecturesInfo)
+            return res.status(200).send(result)
         } catch(err) {
             next(err)
         }

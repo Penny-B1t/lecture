@@ -71,7 +71,7 @@ export class LectureRegisterDetails implements LectureRegisterDetailsImpl{
 export interface LectureDetailsImpl {
     lecturer_id : number;
     title: string;
-    details: string;
+    description: string;
     category: number;
     price: number;
     registerCount?: number;
@@ -83,7 +83,7 @@ export interface LectureDetailsImpl {
 export class LectureDetails implements LectureDetailsImpl{
     lecturer_id : number;
     title: string;
-    details: string;
+    description: string;
     category: number;
     price: number;
     private _registerCount?: number;
@@ -92,12 +92,12 @@ export class LectureDetails implements LectureDetailsImpl{
     private _student_list ?: LectureRegisterDetails[]
 
 
-    constructor(lecturer_id: number,title: string, details: string, category: number, price: number,
+    constructor(lecturer_id: number,title: string, description: string, category: number, price: number,
                 register_date: Date, modified_date: Date) {
 
         this.lecturer_id = lecturer_id;
         this.title = title;
-        this.details = details;
+        this.description = description;
         this.category = category;
         this.price = price;
         this.register_date = register_date;

@@ -67,6 +67,7 @@ export class LectureController {
         // 필수 업다면 전체 검색
         const number = 0;
         const category = lecturerParam.category ? Number(lecturerParam.category) : number;
+        const sortBy = lecturerParam.sortBy ? String(lecturerParam.sortBy) : 'latest';
 
         // 모두 필수
         const orderBy = lecturerParam.orderBy ? (Number(lecturerParam.orderBy) == 1 ? 'ASC' : 'DESC') : 'ASC';
@@ -75,7 +76,7 @@ export class LectureController {
 
         try{
             const rows = await this.lectureDao
-                .getLectureList(instructor, course, student, category, orderBy, page, limit);
+                .getLectureList(instructor, course, student, category, sortBy, orderBy, page, limit);
             res.status(200).json(rows);
         } catch(err) {
             next(err)

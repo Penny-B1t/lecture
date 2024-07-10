@@ -1,5 +1,7 @@
 import {ArrayMinSize, IsInt, IsString, ValidateNested,} from "class-validator";
 import {Type} from "class-transformer";
+import {Is} from "@sinclair/typebox/value/is";
+import {LectureRegister} from "./lecture";
 
 export interface StudentImpl {
     nickname: string;
@@ -17,31 +19,32 @@ export class Student implements StudentImpl{
 }
 
 export interface LectureRegisterImpl {
-    studentId: number;
     lecture_id : number;
 }
 
-export class LectureRegister implements LectureRegisterImpl {
-    @IsString ()
-    studentId: number;
+export class LectureRegist implements LectureRegisterImpl {
 
     @IsInt ()
     lecture_id: number;
 
-    constructor(studentId: number, lecture_id: number) {
-        this.studentId = studentId;
+    constructor( lecture_id: number) {
         this.lecture_id = lecture_id;
     }
 }
 
 export class LectureRegisterArray {
+
+    @IsString()
+    studentId: string;
+
     @ValidateNested({ each: true })
-    @Type(() => LectureRegister)
+    @Type(() => LectureRegist)
     @ArrayMinSize(1, { message: 'lecturesInfo must contain at least 1 item.' })
-    lecturesInfo: LectureRegister[]
+    lecturesInfo: LectureRegist[]
 
 
-    constructor(lecturesInfo: LectureRegister[]) {
+    constructor(studentId: string, lecturesInfo: LectureRegist[]) {
+        this.studentId = studentId;
         this.lecturesInfo = lecturesInfo;
     }
 }

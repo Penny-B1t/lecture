@@ -116,7 +116,7 @@ export class UserDaoImpl{
     async getLectureList(
         instructor: string | null, course: string | null,
         student: string | null, category: number | null,
-        orderBy: string | null, page: number,
+        sortBy: string| null, orderBy: string | null, page: number,
         limit: number,
     )  {
         // return new Promise((resolve, reject) => {
@@ -153,8 +153,16 @@ export class UserDaoImpl{
                     params.push(Number(category));
                 }
 
+                if (sortBy) {
+                    if (sortBy === 'latest') {
+                        query += ' ORDER BY lecture_register_date ' + orderBy;
+                    } else if (sortBy === 'register') {
+                        query += ' ORDER BY register_count ' + orderBy;
+                    }
+                }
+
                 // 마지막으로 정렬 및
-                query +=  ` ORDER BY register_date ${orderBy} LIMIT ${limit} OFFSET ${page * limit}`;
+                query +=  ` LIMIT ${limit} OFFSET ${page * limit}`;
 
                 let [rows] = await connection.query<LectureResisterRow[]>(query, params)
                 console.log(rows)
@@ -183,7 +191,7 @@ export class UserDaoImpl{
 
             let [rows] = await connection.query<RowDataPacket[]>(query, params)
             const lectureDetail: LectureDetails = new LectureDetails(
-                rows[0].lecturer_id ,rows[0].title, rows[0].details, rows[0].category, rows[0].price, rows[0].register_date, rows[0].modified_date)
+                rows[0].lecturer_id ,rows[0].title, rows[0].description, rows[0].category, rows[0].price, rows[0].register_date, rows[0].modified_date)
 
             const lectureId: number = rows[0].lecturer_id;
 
