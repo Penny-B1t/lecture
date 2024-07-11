@@ -87,7 +87,7 @@ describe(`lectureController getLectureList Test`, () => {
         await lectureController.getLectureList(req, res, next);
 
         expect(lecturDao.getLectureList).toHaveBeenCalledWith(
-            'John Doe', 'Math 101', '12345', 1, 'ASC', 0, 10
+            'John Doe', 'Math 101', '12345', 1, 'latest', 'ASC', 0, 10
         );
         expect(res.statusCode).toBe(200);
         expect(res._getJSONData()).toEqual([{

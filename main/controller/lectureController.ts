@@ -13,6 +13,7 @@ export class LectureController {
         @Inject('lectureDao') private lectureDao: UserDaoImpl
     ) {}
 
+    // 
     formatValidationErrors = (errors: ValidationError[]): { property: string, messages: string[] }[] => {
         return errors.map(error => {
             const messages = error.constraints ? Object.values(error.constraints) : [];

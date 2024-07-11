@@ -1,6 +1,6 @@
 import {jest} from "@jest/globals";
 
-import { MysqlRepository } from "../../main/repository/MySQLrepository"
+import MysqlRepository from "../../main/repository/MySQLrepository"
 // jest.mock("../../main/repository/MySQLrepository", () => {
 //     return {
 //         MysqlRepository : jest.fn().mockImplementation(() => {

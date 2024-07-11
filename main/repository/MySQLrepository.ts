@@ -12,7 +12,7 @@ export default class MysqlRepository{
     constructor() {
         console.log(`MySQL has been initialized`)
         this.pool = createPool({
-            host : "223.130.142.124",
+            host : "",
             port : 3308,
             user : "root",
             password : "windstom",

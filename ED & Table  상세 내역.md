@@ -290,6 +290,8 @@ int타입 식별자를 string 타입으로 맵핑하여 강의 정보를 보여�
 식별자 맵핑하여 저장하다 보니 
 
 ## 선언문
+
+**MariaDB**
 ```
 select `l`.`lecture_id`      AS `lecture_id`,
        `l`.`title`           AS `title`,
@@ -309,6 +311,26 @@ from (((`lecture`.`lecture` `l` left join `lecture`.`lecturer` `l2`
       on (`lr`.`student_id` = `s`.`student_id`))
 group by `l`.`lecture_id`
 order by `l`.`lecture_id`
+```
+
+**MySQL**
+```
+select `l`.`lecture_id`                 AS `lecture_id`,
+       `l`.`title`                      AS `title`,
+       `l`.`category`                   AS `category`,
+       `l`.`register_date`              AS `lecture_register_date`,
+       `l2`.`lecturer_name`             AS `lecturer_name`,
+       `l`.`price`                      AS `price`,
+       `l`.`modify_date`                AS `modify_date`,
+       `l`.`access_modifier`            AS `access_modifier`,
+       count(distinct `s`.`student_id`) AS `register_count`
+from (((`lecture`.`lecture` `l` left join `lecture`.`lecturer` `l2`
+        on ((`l`.`lecturer_id` = `l2`.`lecturer_id`))) left join `lecture`.`lecturer_register` `lr`
+       on ((`l`.`lecture_id` = `lr`.`lecture_id`))) left join `lecture`.`student` `s`
+      on ((`lr`.`student_id` = `s`.`student_id`)))
+group by `l`.`lecture_id`, `l`.`title`, `l`.`category`, `l`.`register_date`, `l2`.`lecturer_name`, `l`.`price`,
+         `l`.`modify_date`, `l`.`access_modifier`
+order by `l`.`lecture_id`;
 ```
 
 ## lecture_registration_details

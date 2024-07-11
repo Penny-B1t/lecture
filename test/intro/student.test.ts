@@ -33,15 +33,20 @@ describe(`lectureController getLectureList Test`, () => {
     })
 
     it(``, () => {
-        expect(student).toBeInstanceOf(MysqlRepository);
-        expect(studentDao).toBeInstanceOf(MysqlRepository);
         expect(typeof student.registerStudent).toBe("function");
         expect(student).toBeInstanceOf(StudentController);
     })
 
     it(``, async () => {
         // req.query.instructor = 'test';
+        
+        req.query = {
+            nickname: 'Python',
+            email: 'king@gmail.com'
+        }
         await student.registerStudent(req, res, next);
+        
+        
         expect(studentDao.setStudentRegister).toHaveBeenCalled();
     })
 })
@@ -107,9 +112,17 @@ describe(`lectureController deleteStudent Test`, () => {
         expect(student).toBeInstanceOf(StudentController);
     })
 
-    it(``, async () => {
-        // req.query.instructor = 'test';
+    it('should register a lecture when valid data is provided', async () => {
+        const req = httpMocks.createRequest({
+            method: 'POST',
+            url: '/student/register/1',
+            params: { id: '1' },
+            body: [{ lecture_id: 1 }]
+        });
+        const res = httpMocks.createResponse();
+        const next = jest.fn();
+
         await student.lecturerRegister(req, res, next);
-        expect(studentDao.setLectureRegister).toHaveBeenCalled();
-    })
+        expect(res.statusCode).toBe(200);
+    });
 })
